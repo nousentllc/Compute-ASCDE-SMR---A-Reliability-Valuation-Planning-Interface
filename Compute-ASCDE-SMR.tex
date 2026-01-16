@@ -290,6 +290,55 @@
 \tableofcontents
 \newpage
 
+
+\section*{Executive Summary and How to Use This Paper}
+\addcontentsline{toc}{section}{Executive Summary and How to Use This Paper}
+
+\subsection*{Executive Summary}
+\addcontentsline{toc}{subsection}{Executive Summary (One Page)}
+
+This paper defines a planner-facing valuation interface for integrating Rubin-class AI loads into power systems where \emph{reliability} is the binding constraint rather than average efficiency. The core claim is that ``AI efficiency'' must be modeled as a \emph{multi-physics, market-coupled functional} whose grid externalities are driven by (i) \emph{temporal densification} (peak and ramp stress), (ii) \emph{stiffness} (the cost of curtailment via state-switching penalties), and (iii) \emph{deliverability/power-quality constraints} (harmonics, slew limits, and thermal coincidence effects).
+
+We formalize a system valuation metric---\textbf{Compute-ASCDE}---that internalizes:
+\begin{itemize}
+  \item stochastic energy and transmission costs under nodal prices (including coincidence exposure),
+  \item reliability externalities via $\mathrm{VOLL}\cdot\Delta\mathrm{EUE}$,
+  \item deliverability derates $D(\theta)$ induced by harmonic, ramp, and local thermal constraints,
+  \item the distinction between \emph{dispatch-flexible inference} and \emph{state-stiff training} as separate resource classes from a grid perspective.
+\end{itemize}
+
+The planning output is therefore a \emph{regime map} rather than a point forecast: under realistic uncertainty in queue latency, market volatility, and load flexibility, the same nameplate MW can be either (a) a \emph{grid-accretive asset} (VPP-like behavior and negative effective Opex via reserve monetization) or (b) a \emph{parasitic stressor} (peak coincidence risk plus forced run-through scarcity due to switching costs).
+
+\textbf{Connection to the companion paper (\emph{Contractible AI Control}):} The Compute-ASCDE interface depends on \emph{verifiable operational primitives}---measured curtailability, admissible ramp behavior, power quality, and \emph{attested goodput}. The control paper supplies the telemetry, gating, and attestation machinery that makes $D(\theta)$, $\Delta\mathrm{EUE}$, and ``flexibility claims'' contractible.
+
+\subsection*{How to Use This Paper (Planner / Operator Workflow)}
+\addcontentsline{toc}{subsection}{How to Use This Paper (Planner / Operator Workflow)}
+
+\textbf{Inputs required}
+\begin{enumerate}
+  \item \textbf{Load shape and operating mode:} baseline hourly profile and intended dispatch policy (training vs.\ inference mix), including the sprint factor $\sigma$ (peak/average).
+  \item \textbf{Market data:} DAM/RT hub prices (and ancillary products if claiming VPP value), plus tariff constructs relevant to coincidence exposure (e.g., 4CP-like mechanisms).
+  \item \textbf{Reliability institution parameters:} VOLL assumption, scarcity/adder mechanics (ORDC-style or regional analog), and local deliverability/power-quality limits (THD, ramp constraints, substation/transformer derates).
+  \item \textbf{Flexibility evidence (from \emph{Contractible AI Control}):} demonstrated curtailment response, restart time distribution, switching penalty model, and telemetry/attestation quality.
+\end{enumerate}
+
+\textbf{Procedure}
+\begin{enumerate}
+  \item \textbf{Classify the load:} compute stiffness $k_{\text{stiff}}$ and demand elasticity $\varepsilon$ (or bounded scenarios) to separate flexible inference from stiff training.
+  \item \textbf{Compute private economics:} estimate LCRT (operator breakeven cost of reliable tokens) under stochastic prices and switching costs.
+  \item \textbf{Compute system economics:} compute Compute-ASCDE including $\mathrm{VOLL}\cdot\Delta\mathrm{EUE}$ and deliverability derates $D(\theta)$.
+  \item \textbf{Run scenario / Monte Carlo:} sweep $\delta$ (efficiency gain), $\sigma$ (sprint), $k_{\text{stiff}}$ (stiffness), queue latency $\tau$, and temperature-linked covariance.
+  \item \textbf{Output:} report P50/P95 Compute-ASCDE, regime classification, and a mitigation list (BTM storage, harmonic filters, ramp governors, and telemetry+attestation requirements).
+\end{enumerate}
+
+\textbf{Decision rule}
+\begin{itemize}
+  \item \textbf{Approve / incentivize} if $\text{Compute-ASCDE} \le$ system benchmark $+$ strategic premium \emph{and} flexibility claims are \emph{attested} (see companion paper).
+  \item \textbf{Require mitigation or deny} if tail risk is dominated by coincidence peaks, non-curtailability, or power-quality derates.
+\end{itemize}
+
+\newpage
+
 % =========================================================
 % 1. Problem Statement
 % =========================================================
